@@ -39,7 +39,6 @@
             <span>p</span>
             <span>t</span>
         </h2>
-        
     </section>
 
     <!-- <button onclick="nombreRandom()" style="height: 3rem; width: 7rem;">Nombre</button>
@@ -69,19 +68,6 @@
         window.console.log=function(){};
     </script> -->
 
-    <script type="text/javascript">
-        document.addEventListener("mousemove", parallax);
-        function parallax(e) {
-            this.querySelectorAll('.layer').forEach(layer => {
-                const speed = layer.getAttribute('data-speed')
-
-                const x = (window.innerWidth - e.pageX*speed)/100
-                const y = (window.innerHeight - e.pageY*speed)/100
-
-                layer.style.transform = `transaleX(${x}px) transaleY(${y}px)`
-            })
-        }
-    </script>
     <!-- <script src="js/sintaxis.js"></script> -->
     <!-- <script src="js/operadores.js"></script> -->
     <!-- <script src="js/estructuras.js"></script> -->
@@ -92,7 +78,9 @@
     <!-- <script src="js/clases.js"></script> -->
     <!-- <script src="js/builtins_strings.js"></script> -->
     <!-- <script src="js/builtins_numbers.js"></script> DESCOMENTAR EN CASO DE USO DE ESTE SCRIPT: <button></button> y <h2></h2> -->
-    <script src="js/builtins_dates.js"></script>
+    <!-- <script src="js/builtins_dates.js"></script> -->
+    <!-- <script src="js/builtins_arrays.js"></script> -->
+    <script src="js/builtins_objetos.js"></script>
 </body>
 
 </html>
