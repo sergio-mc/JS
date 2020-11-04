@@ -1,7 +1,7 @@
 // Metodos y propiedades propios de JavaScript para arrays de objetos
 
 let jugadores = [
-    {nombre: 'Maria', apellidos:'Perez', puntuacion:5},
+    {nombre: 'Maria', apellidos:'Zuil', puntuacion:5},
     {nombre: 'Juan', apellidos:'Gomez', puntuacion:2},
     {nombre: 'Laura', apellidos:'Lopez', puntuacion:8},
 
@@ -94,7 +94,7 @@ function compararAscendente (a, b) {
     if(a.apellidos < b.apellidos) {
         return -1
     }
-    if(a.nombre > b.nombre) {
+    if(a.apellidos > b.apellidos) {
         return 1;
     }
     return 0;
@@ -105,9 +105,9 @@ console.table(jugadores);
 
 function compararDescendente (a, b) {
     if(a.apellidos < b.apellidos) {
-        return 1
+        return 1;
     }
-    if(a.nombre > b.nombre) {
+    if(a.apellidos > b.apellidos) {
         return -1;
     }
     return 0;
@@ -115,6 +115,8 @@ function compararDescendente (a, b) {
 
 jugadores.sort(compararDescendente);
 console.table(jugadores);
+
+
 
 
 
