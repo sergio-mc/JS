@@ -1,0 +1,15 @@
+
+// Iniciar servidor_express con nodemon
+
+npm init
+npm i express --save
+npm i nodemon --save-dev
+npm i body-parser --save
+
+
+package.json : "scripts": {
+    "start": "nodemon app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+npm run start
