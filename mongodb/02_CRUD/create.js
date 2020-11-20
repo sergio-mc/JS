@@ -129,10 +129,3 @@ db.usuarios.save({ _id: 30, nombre: "Carolina", apellidos: "Sanchez", edad: 21 }
 
 // db.<collection>.bulkWrite()
 
-
-
-
-
-
-
-
