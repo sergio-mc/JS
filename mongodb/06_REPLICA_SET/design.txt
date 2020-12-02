@@ -1,0 +1,33 @@
+1. - Tolerancia de fallos
+
+- Mayoria en el cluster. Mas de la mitad de los miembros del cluster, incluyendo
+  los que no esten disponibles en ese momento.
+
+- Para que se desencadenen elecciones y por tanto haya un nuevo primario para mantener
+  la disponibilidad, necesitamos que haya una mayoria de miembros disponibles.
+
+  Nº Miembros totales        Mayoria
+            1                   1
+            2                   2
+            3                   2
+            4                   3
+            5                   3
+            6                   4
+            7                   4
+            8                   5
+            9                   5
+
+    Determina la tolerancia segun el numero de miembros del cluster
+
+    Nº Miembros             Mayoria (Elecciones)            Tolerancia a fallos
+        2                           2                                0
+        3                           2                                1
+        4                           3                                1
+        5                           3                                2
+
+Como la tolerancia siempre es mas favorable en los cluster de numeros impares, Mongo dispone de
+miembros configurables como Arbitros para que, si nuestro diseño es par, rompamos el empate y se
+pueda aumentar la tolerancia.
+
+
+2. - Mayoria en el despliegue en varios datacenters.

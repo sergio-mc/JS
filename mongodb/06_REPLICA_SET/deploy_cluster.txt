@@ -1,0 +1,54 @@
+Despliegue en local de un cluster para test de funcionalidades de Replica Set
+
+
+·············· Cluster de 3 servidores ··············
+
+- Crear 3 directorios en nuestros equipo:
+    - server1, server2, server3
+
+- Comando para levantar servidores de un cluster
+
+ej: mongod --replSet <nombreCluster> --dbpath <rutaServidor> --port <puerto a usar>
+
+mongod --replSet clusterSergio --dbpath data/server1 --port 27101
+mongod --replSet clusterSergio --dbpath data/server2 --port 27102
+mongod --replSet clusterSergio --dbpath data/server3 --port 27103
+
+
+- Configuracion e inicializacion del Replica Set
+
+Conectarse a uno de los miembros
+
+mongo --port 27101
+
+rs.initiate({
+    _id: "clusterSergio",
+    members: [
+        {_id: 0, host: "localhost:27101"},
+        {_id: 1, host: "localhost:27102"},
+        {_id: 2, host: "localhost:27103"},
+    ]
+})
+
+Tras 15 a 20 segundos, comprobamos con: 
+
+rs.status()
+
+
+Comprobar la replica de datos
+
+use replicaDatosTest
+
+for (i = 0; i < 1000; i++) {
+    db.foo.insert({a:i})
+}
+
+Por defecto los secundarios no aceptan operaciones de lectura, pero, a nivel de base de datos 
+podemos permitirlas pasandole.
+
+db.setSecondaryOk()
+
+Si realizaramos sobre algun secundario una operacion de escritura siempre devolvera error
+
+
+Automatic failover

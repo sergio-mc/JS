@@ -1,0 +1,9 @@
+Oplog o registro de operaciones
+
+Es una coleccion de cada servidor que se encuentra en la base de datos local y no se puede modificar.
+Es utilizada para la replicacion de datos en MongoDB.
+
+    - Todas las operaciones registradas en el oplog son las operaciones de la base de datos
+      convertidas en operaciones idempotentes.
+
+    
