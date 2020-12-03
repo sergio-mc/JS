@@ -6,4 +6,34 @@ Es utilizada para la replicacion de datos en MongoDB.
     - Todas las operaciones registradas en el oplog son las operaciones de la base de datos
       convertidas en operaciones idempotentes.
 
-    
+
+Tamaño del oplog
+
+El oplog es una coleccion de tipo capped: (https://docs.mongodb.com/manual/core/capped-collections/)
+tamaño es establecido por defecto para el cluster por Mongo:
+
+WiredTiger utiliza el 5% del espacio disponible en disco con min 50MB y max 50 GB
+
+Tu tamaño de oplog te mantenga las operaciones entre 1 y 2 dias de antiguedad
+
+3 escenarios en los que puede ser necesario aumentar el tamaño del oplog:
+
+- Actualizaciones a multiples documentos al mismo tiempo.
+
+- En un espacio de tiempo se produzca el mismo numero de eliminaciones que de inserciones de documentos.
+
+- Multiples actualizaciones que no modifican los tamaños de las colecciones pero si que generan muchas operaciones.
+
+
+Comprobar el tamaño
+
+db.getReplicationInfo()
+
+Para modificarlo
+
+db.adminCommand({
+  replSetResizeOplog: 1,
+  size: <tamaño del oplog en megas>,
+  minRetentionHours: <minimo de horas a mantener una operacion>
+
+})

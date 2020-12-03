@@ -1,0 +1,38 @@
+Read Preference
+
+Establecimiento de permisos de lectura en miembros con independencia de el read 
+preference de las aplicaciones que realicen operaciones de lectura sobre ellos.
+
+Permisos de lectura para todo el miembro: 
+
+- Conectamos al miembro en concreto:
+
+rs.secondaryOk()
+
+- A nivel de base de datos:
+
+db.setSecondaryOk()
+
+- Para eliminar los permisos de lectura se utiliza:
+
+db.getMongo().setReadPref(<modo read-preference>)
+
+
+Para definir la preferencia de lectura de nuestras aplicaciones se implementan las siguientes opciones
+a nivel de driver de cada aplciacion.
+
+5 modos u opciones de lectura a nivel de driver:
+
+    - "primary". Por defecto, lecturas siempre al primario.
+
+    - "primaryPreferred". En principio siempre al primario, salvo que esté no disponible por elecciones, interrupciones,
+                          y en ese caso el driver podrá dirigir las lecturas a un secundario.
+
+    - "secondary". Las lecturas iran siempre a secundarios.
+
+    - "secondaryPreferred". En principio siempre al secundario, salvo que por falta de disponibilidad de ellos las lecturas
+                            sean atendidas por el primario.
+
+    - "nearest". Enruta las operaciones de lectura al miembro con menor latencia, con independencia de si es primario operaciones
+                 secundario.
+

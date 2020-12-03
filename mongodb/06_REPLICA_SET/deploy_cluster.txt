@@ -52,3 +52,91 @@ Si realizaramos sobre algun secundario una operacion de escritura siempre devolv
 
 
 Automatic failover
+
+
+Configuracion de la prioridad de los miembros
+
+rs.config() -> Nos devuelve un objecto con la configuracion
+
+objeto podemos modificar la Configuracion
+
+let conf = rs.conf()
+
+conf.members[2].priority = 2
+
+rs.reconfig(conf)
+
+
+Añadir nuevo miembro al cluster
+A nivel de este test creamos el directorio server4
+
+mongod --replSet clusterSergio --dbpath data/server4 --port 27104
+
+Añadimos desde la shell conectada al primario con:
+
+rs.add({
+    host: "localhost:27104",
+    priority: 0,
+    votes: 0
+})
+
+conf = rs.conf()
+
+conf.members[3].priority = 1
+conf.members[3].votes = 1
+
+rs.reconfig(conf)
+
+Comprobamos tolerancia a fallos
+
+- Cuando dos servidores esten caidos, incluso aunque los dos vivos tengan el primario esete pasara
+  a ser secundario porque la tolerancia esta diseñada para que no se puedan designar 2 primarios
+  al mismo tiempo en particiones de red que dejen a los miembros aislados por pares.
+
+- Para solucionar este caso podemos diseñar el cluster con miembros impares y si necesitamos ahorrar
+  en recursos el que desempata puede ser un arbitro.
+
+
+Añadir un miembro arbitro
+
+A nivel de test creamos directorio server5 y levantamos servidor
+
+mongod --replSet clusterSergio --dbpath data/server5 --port 27105
+
+rs.addArb("localhost:27105")
+
+
+
+Miembros ocultos
+
+Asignar su propiedad hidden true y (obligatoriamente) cambiar su prioridad a 0.
+
+config = rs.config()
+
+config.members[3].priority = 0
+config.members[3].hidden = true
+
+rs.reconfig(conf)
+
+
+Miembro delayed
+
+Un tipo de miembro oculto, por tanto tiene que estar con prioridad 0 para que no pueda ser el
+primario y recibir escritura y con hidden true par que no pueda recibir lecturas.
+
+Añade un retraso en la sincronizacion en segundos para prevencion de desastres.
+
+config = rs.config()
+
+config.members[3].slaveDelay = 120 // segundos
+
+rs.reconfig(conf)
+
+
+Retirar un miembro (por el motivo que fuera)
+
+- Apagar el miembro.
+
+- rs.remove("localhost:27104")
+
+- Tambien el arbitro: rs.remove("localhost:27105")

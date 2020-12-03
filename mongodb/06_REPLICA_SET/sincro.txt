@@ -1,0 +1,66 @@
+Formas de sincronizacion
+
+1.- Sincronizacion inicial
+
+Se incorpora un miembro al cluster.
+
+- El miembro esté vacio:
+        a) Clonar desde el primario todas las bases de datos excepto local.
+        b) Clonar la base de datos local en la que ya está el oplog.
+        c) Sincronizacion con las ultimas operaciones del oplog.
+    
+    - Proceso lento
+    - El uso excesivo de la memoria del Primario. Se puede perder el set de datos frecuentes.
+
+- El miembro se incorpore con un backup del primario.
+        a) Se realizará clonación de lo que falte desde el backup
+        b) Sincronizacion con las ultimas operaciones del oplog.
+
+
+2.- Replicacion
+
+
+Los secundarios copian las operaciones del oplog del primario o del oplog de secundarios (con voto 1 y que no esten
+ocultos).
+
+    - Manejo de la obsolescencia. Un miembro que se haya caido puede no volver a recuperar su estado previo
+    si se queda demasiado atras en la sincronizacion.
+        - Haya estado mas tiempo caido que el diferencial de tiempo de las operaciones registradas
+        por el oplog del primario. => obsoleto.
+
+        - Por el volumen de operaciones que tenga el cluster el secundario no sea capaz de ponerse al dia
+        (tenemos un volumen altisimo de operaciones de escritura) => inalcanzable.
+
+
+Estados de los miembros del cluster
+
+STARTUP: Cuando un miembro se añade por primera vez, carga la configuracion del replica set.
+
+STARTUP2: Cuando ya han pasado las posibles elecciones al añadir este miembro.
+
+RECOVERING: Ya esta funcionando correctamente pero no esta disponible para lecturas.
+    - Sincronizacion inicial.
+    - Sincronizacion Replicacion.
+    - Obsoleto.
+    - Inalcanzable.
+
+ABITER. 
+
+DOWN.
+
+UNKNOW: Tiene problemas a la hora de establecer la comunicacion con los otros miembros.
+
+REMOVED.
+
+PRIMARY.
+
+SECONDARY.
+
+ROLLBACK: Estado cuando se acaba la fase recovering y comprueba que un anterior primario tiene operaciones 
+que no se propagaron a los demas miembros y que por tanto las deshace en este estado Rollback. Una vez
+que hace el rollback, pasará a SECONDARY.
+
+
+
+
+
