@@ -1,0 +1,138 @@
+1.- Config server
+
+Necesitamos un cluster replica set para este componente del shard cluster.
+
+Directorios: 
+
+    data/configserver1
+    data/configserver2
+    data/configserver3
+
+3 Instancias para cada miembro del config server, las levantamos:
+
+mongod --configsvr --replSet configServerSergio --dbpath data/configserver1 --port 27001
+mongod --configsvr --replSet configServerSergio --dbpath data/configserver2 --port 27002
+mongod --configsvr --replSet configServerSergio --dbpath data/configserver3 --port 27003
+
+
+Nos conectamos a uno de los miembros
+
+mongo --port 27001
+
+E inicializamos el cluster (como configsvr)
+
+rs.initiate({
+    _id: "configServerSergio",
+    configsvr: true,
+    members: [
+        {_id: 0, host: "localhost:27001"},
+        {_id: 1, host: "localhost:27002"},
+        {_id: 2, host: "localhost:27003"},
+    ]
+})
+
+
+2.- Shards
+
+De momento creamos 2 cluster replica set, 1 para cada shard.
+
+    1er cluster:
+
+        Directorios
+        data/shard1server1
+        data/shard1server2
+        data/shard1server3
+
+        Levantamos 3 maquinas:
+
+        mongod --shardsvr --replSet shard1ServerSergio --dbpath data/shard1server1 --port 27101
+        mongod --shardsvr --replSet shard1ServerSergio --dbpath data/shard1server2 --port 27102
+        mongod --shardsvr --replSet shard1ServerSergio --dbpath data/shard1server3 --port 27103
+
+        Nos conectamos a uno de los miembros
+        
+        mongo --port 27101
+
+        rs.initiate({
+            _id: "shard1ServerSergio",
+            members: [
+                {_id: 0, host: "localhost:27101"},
+                {_id: 1, host: "localhost:27102"},
+                {_id: 2, host: "localhost:27103"},
+            ]
+        })
+
+    2º cluster:
+
+        Directorios
+        data/shard2server1
+        data/shard2server2
+        data/shard2server3
+
+        Levantamos 3 maquinas:
+
+        mongod --shardsvr --replSet shard2ServerSergio --dbpath data/shard2server1 --port 27201
+        mongod --shardsvr --replSet shard2ServerSergio --dbpath data/shard2server2 --port 27202
+        mongod --shardsvr --replSet shard2ServerSergio --dbpath data/shard2server3 --port 27203
+
+        Nos conectamos a uno de los miembros
+        
+        mongo --port 27201
+
+        rs.initiate({
+            _id: "shard2ServerSergio",
+            members: [
+                {_id: 0, host: "localhost:27201"},
+                {_id: 1, host: "localhost:27202"},
+                {_id: 2, host: "localhost:27203"},
+            ]
+        })
+
+
+3.- Mongos
+
+Levantamos mongos con el siguiente comando.
+
+mongos --configdb configServerSergio/localhost:27001,localhost:27002,localhost:27003 --port 27000
+
+
+4.- Añadir los shard al sharding cluster
+
+Nos conectamos a la instancia de mongos
+
+mongo --port 27000
+
+
+Añadimos cada shard 
+
+sh.addShard("shard1ServerSergio/localhost:27101,localhost:27102,localhost:27103")
+sh.addShard("shard2ServerSergio/localhost:27201,localhost:27202,localhost:27203")
+
+Comprobamos con:
+
+sh.status() 
+
+
+5.- Añadir base de datos y coleccion al sharding.
+
+- En un sharding cluster es posible tener bases de datos y colecciones tanto shard como no shard
+
+- Necesitamos especificar que una base de datos y una coleccion va a ser sharding
+
+Para nuestro test vamos a modificar el valor del chunk size
+
+Esta configuracion se modifica en la base de datos config del configserver
+
+Desde mongos:
+
+use config
+
+db.settings.save({_id: "chunksize", value: 16}) // Tamaño en megas
+
+Vamos a crear una base de datos en sharding cluster que pueda tener colecciones fragmentadas.
+
+sh.enableSharding(<nombreBaseDatos>) sh.enableSharding("maraton")
+
+Creamos una colecciont de tipo shard en la cual ya tenemos que pasar la shard key o clase de shard.
+
+sh.shardCollection("<basedatos.coleccion>",{clave1: 1, clave2: 1, ...}) / sh.shardCollection("maraton.participantes",{edad: 1})

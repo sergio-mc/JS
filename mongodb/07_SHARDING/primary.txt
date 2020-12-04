@@ -1,0 +1,14 @@
+Concepto de primary en Sharding
+
+El shard primary de un sharding cluster será el que tenga las colecciones no particionadas. Cuando
+se despliega el shard uno de ellos se fija como primary y este concepto no tiene nada que ver con 
+el primary de los replica set.
+
+¿Como sabemos cual es el primary?
+
+En la base de datos config del config server.
+
+En mongos
+
+use config
+db.databases.find()
