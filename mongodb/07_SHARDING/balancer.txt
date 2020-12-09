@@ -1,0 +1,46 @@
+Sharding balancer.
+
+Mecanismo de migración de chunks en las colecciones sharding de MongoDB.
+
+Migrar los chunks para distribuirlos uniformemente en los shards cuando se
+superan los siguientes valores*:
+
+Nº Chunks       Diferencia entre chunks/sharding
+
+menor 20                    2
+20-79                       4
+mas 80                      8
+
+Como las migraciones impactan en el rendimiento de los shards afectados:
+
+    - Solo se realizan migraciones cuando se superan los valores*.
+    - Solo se realiza la migración de un chunk al mismo tiempo.
+
+Procedimiento de migración.
+
+1.- Inicia el proceso, las operaciones sobre los documentos del chunk 
+    se mantienen en el shard de origen.
+
+2.- Se crea el chunk en el destino y se realiza la actualización
+del índice en el shard destino.
+
+3.- Escritura de los docs en el shard destino.
+
+4.- Sincronización del chunk en el destino con el chunk en la fuente para
+    actualizar los docs durante la migración.
+
+5.- Actualizar los datos en el config server.
+
+6.- Las operaciones ya se realizan en el shard destino y se elimina el chunk y los docs del shard fuente.
+
+Administración del balancer
+
+sh.startBalancer()
+
+sh.stopBalancer()
+
+sh.getBalancerState() // Si el balancer está activado
+
+sh.isBalancerRunning() // Si se están produciendo migraciones.
+
+Existe la posibilidad de activar el balancer en ventanas de mantenimiento programables.

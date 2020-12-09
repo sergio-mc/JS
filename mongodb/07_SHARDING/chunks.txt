@@ -1,0 +1,41 @@
+Chunks en Sharding
+
+Agrupacion logica de los documentos de una coleccion sharding con un rango para poder
+distribuir uniformemente los mismos en los diferentes shard minimizando el impacto
+de las migraciones.
+
+Almacenan docs hasta un valor chunkSize (Por defecto es de 64MB)
+Cuando el tamaño del chunk supera ese limite este se divide automaticamente
+y en el momento en el que se superan unos limites establecidos por el Balancer
+los chunks migran de un shard a otro para distribuir uniformemente la coleccion.
+
+Los chunk tiene un rango dinamico de valores de la shard key que permite que las 
+operaciones de escritura entrantes completen con los nuevos documentos el chunk.
+
+
+Rangos:
+    valor menor o mas bajo inclusivo
+    valor mayor o mas alto exclusivo
+
+Chunks iniciales.
+
+Si la coleccion está vacia: 
+
+    - Un chunk inicial.
+    - Si la shard key es hashed, crea dos chunk inicialmente en cada shard.
+
+Si la coleccion está llena:
+
+    - Crea los chunks necesarios para distribuir uniformemente los docs, ya que
+      ya dispone del tamaño de estos.
+
+
+El split (division) cuando se supera el limite del chunk se llev a cabo de manera
+automatica, aunque existe varios metodos para dividirlos de manera manual.
+
+Jumbo chunk
+
+Un chunk se marca como Jumbo cuando, aunque supere el limite de su tamaño no se pueda dividir porque
+tiene el mismo valor en la shard key (sucedera con Baja Cardinalidad y/o alta frecuencia).
+
+Mientras un chunk esta marcado como Jumbo se queda en el mismo shard y no se mueve.

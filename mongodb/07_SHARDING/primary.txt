@@ -4,6 +4,14 @@ El shard primary de un sharding cluster será el que tenga las colecciones no pa
 se despliega el shard uno de ellos se fija como primary y este concepto no tiene nada que ver con 
 el primary de los replica set.
 
+El primary se establece a ni vel de base de datos, por tanto una misma base de datos, tendra su "primario" en 
+un determinado shard y en ese shard estaran todas sus colecciones no particionadas. Pero, como es a nivel de 
+base de datos, distintas bases de datos podran tener un shard primario diferente.
+
+¿Como elige MongoDB el primario de las colecciones no sharding?
+
+Cuando se crea la base de datos selecciona el cluster que tenga menos cantidad de datos.
+
 ¿Como sabemos cual es el primary?
 
 En la base de datos config del config server.
