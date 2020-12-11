@@ -1,0 +1,3 @@
+mongostat // Status de las operaciones en marcha
+
+mongotop <segundos> // Operaciones

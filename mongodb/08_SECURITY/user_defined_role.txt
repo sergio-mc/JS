@@ -1,0 +1,43 @@
+Roles propios
+
+db.createRole(documento) // También se especifican a nivel de base de datos
+
+{
+    role: <nombre>,
+    privileges: [
+        {resource: <recurso>, actions: [<accion1>, <accion2>, ...]}
+    ],
+    roles: [
+        <otros-roles>
+    ]
+}
+
+Ejemplo
+
+use maraton
+
+db.createRole({
+    role: "leerTodasEscribirJueces",
+    privileges: [
+        {
+            resource: {db: "maraton", collection: "parcipantes"},
+            actions: ["find","insert","update","remove"]
+        }
+    ],
+    roles: [
+        {role: "read", db: "maraton" } // Campo obligatorio ¿?
+    ]
+})
+
+Acciones => https://docs.mongodb.com/manual/reference/privilege-actions/index.html
+
+Creamos usuario con ese role
+
+db.createUser({
+    user: "raquel",
+    pwd: "raquel1234",
+    roles: ["leerTodasEscribirJueces"]
+})
+
+
+

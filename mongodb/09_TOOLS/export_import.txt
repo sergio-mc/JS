@@ -1,0 +1,89 @@
+Herramientas de exportación/importación de registros (documentos)
+
+mongoexport // exporta los registros en formato json (por defecto) ó csv
+
+--host <direccion> | --uri <uri>
+
+--port <puerto>
+
+--db=<base de datos>
+
+--collection=<coleccion>
+
+--fields=<campo1,campo2,...>
+
+--type=csv
+
+--noHeaderLine
+
+--out=ruta/<nombrearchivo>.json | .csv
+
+Práctica
+
+mongoexport --port 27017 --db="maraton" --collection="participantes"  --fields=nombre,apellido1,edad  --out=data/maraton/participantes.json
+
+mongoexport --port 27017 --db="maraton" --collection="participantes"  --fields=nombre,apellido1,edad  --out=data/maraton/participantes.csv --type=csv --noHeaderLine
+
+mongoimport // importar registros a nuestras colecciones desde archivos json | csv | tsv
+
+--host <direccion> | --uri <uri>
+
+--port <puerto>
+
+--db=<base de datos>
+
+--collection=<coleccion>
+
+--file=ruta/<archivo>.json | .csv | .tsv
+
+--type=<json|csv|tsv>
+
+--mode=<insert|upsert|merge>
+
+--upsertFields=<campo1, campo2>  // Sustituir el criterio del modo de _id a otros campos
+
+Práctica
+
+Creamos un json con los archivos
+
+{_id: 1, nombre: "Juan"}
+{_id: 2, nombre: "Laura"}
+{_id: 3, nombre: "María"}
+{_id: 4, nombre: "Pedro"}
+{_id: 5, nombre: "Lucía"}
+
+
+Importamos
+
+mongoimport --db="shop10" --collection="clientes" --file="/Users/pedro/Documents/09_TOOLS/clientes.json" --type=json
+
+Y ahora volvemos a importar con un error
+
+{"_id": 6, "nombre": "Carlos"}
+{"_id": 7, "nombre": "Juan"}
+{"_id": 3, "nombre": "Alberto"} // error por _id duplicado
+{"_id": 8, "nombre": "Sara"}
+{"_id": 9, "nombre": "Raquel"}
+
+Con el modo upsert actualiza los documentos coincidentes (campo _id) y los que no encuentre los crea.
+
+{"_id": 1, "nombre": "Pepe"}
+{"_id": 2, "nombre": "Pepe"}
+{"_id": 3, "nombre": "Pepe"}
+{"_id": 4, "nombre": "Pepe"}
+{"_id": 5, "nombre": "Pepe"}
+{"_id": 20, "nombre": "Pepe"}
+
+mongoimport --db="shop10" --collection="clientes" --file="/Users/pedro/Documents/09_TOOLS/clientes.json" --type=json  --mode="upsert"
+
+Con el modo merge actualizar los documentos coincidentes fusionando sus campos y los que no encuentre los crea.
+
+{"_id": 1, "apellidos": "Gómez"}
+{"_id": 2, "apellidos": "Gómez"}
+{"_id": 3, "apellidos": "Gómez"}
+{"_id": 4, "apellidos": "Gómez"}
+{"_id": 5, "apellidos": "Gómez"}
+{"_id": 40, "apellidos": "Gómez"}
+
+mongoimport --db="shop10" --collection="clientes" --file="/Users/pedro/Documents/09_TOOLS/clientes.json" --type=json  --mode="merge"
+

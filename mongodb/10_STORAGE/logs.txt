@@ -1,0 +1,48 @@
+Database profiling
+
+Es tener logs de las operaciones "lentas" de una base de datos.
+(por defecto no está activado)
+
+db.setProfilingLevel(<nivel>, {slowms: <milisegundos>})
+
+Por defecto slowms es 100 ms
+
+Niveles
+
+0 Desactivado (defecto)
+1 Recogerá todas las operaciones mayores de slowms.
+2 Recogerá todas las operaciones.
+
+Práctica
+
+use maraton
+
+db.setProfilingLevel(2)
+
+Los logs se recogerán en la misma bae de datos en 
+una colección llamada system.profile
+
+db.system.profile.find().pretty()
+
+Server logs
+
+Los logs de servidores se muestran por defecto en la terminal de mongod, si necesitamos
+pasarlos a fichero tenemos la opción --logpath a usar con el inicio de mongod.
+
+mongod --dbpath data/db --logpath data/db/logs
+
+Los logs están compuestos, entre otros, por los campos:
+
+- Severidad
+- Componente
+- Mensaje
+
+Rotación de logs
+
+use admin
+
+db.adminCommand({logRotate: 1})
+
+JQ Herramienta para utilización de logs en este formato json
+
+https://stedolan.github.io/jq/

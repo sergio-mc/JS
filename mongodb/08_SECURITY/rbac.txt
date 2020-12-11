@@ -1,0 +1,142 @@
+Control de Accesos basado en Roles
+
+- Roles. Agrupación lógica del conjunto de privilegios que son asignados a los usuarios.
+
+- Privilegios. Especificación del permiso para realizar operaciones sobre los recursos.
+
+- Recursos. Los componentes del sistema sobre los que podemos operar, bases de datos, colecciones,
+            índices, etc.
+
+- Acciones. Operaciones que podemos llevar a cabo en MongoDB 
+            sobre los recursos, lectura, escritura, borrado, backup,  etc...
+
+
+Práctica.
+
+Roles de usuarios de base de datos
+
+read
+
+use clinica
+
+db.createUser({
+    user: "sara",
+    pwd: "sara1234",
+    roles: ["read"]
+})
+
+readWrite
+
+Comprobar los privilegios del usuario:
+
+db.runCommand({
+    usersInfo: "sara",
+    showPrivileges: true
+})
+
+Modificar los roles del usuario:
+
+db.runCommand({
+    updateUser: "sara",
+    roles: [
+        {role: "readWrite", db: "clinica"}
+    ]
+})
+
+Extender usuario para otra base de datos
+
+db.runCommand({
+    updateUser: "sara",
+    roles: [
+        {role: "readWrite", db: "clinica"},
+        {role: "read", db: "nuevayork"}
+    ]
+})
+
+Roles para usuarios de administración (a nivel de bases de datos)
+
+dbAdmin  idem readWrite + ops sobre el system.profile
+
+userAdmin Permite administración de usuarios a nivel de esa base de datos
+
+db.createUser({
+    user: "carlos",
+    pwd: "carlos1234",
+    roles: ["userAdmin"]
+})
+
+dbAdmin // Puede desarrollar operaciones de administración de la base de datos
+
+dbOwner // Puede desarrollar cualquier operación a nivel de base de datos
+
+
+*///////////////////////////////////*
+Cuando un role nos concede privilegios para todas las bases de datos
+será proporcionado a usuarios creados en la base de datos admin
+*///////////////////////////////////*
+
+Roles para clusters (tanto replica set como sharding) (tienen que estar sobre la base de datos admin)
+
+clusterMonitor // Conceder acceso a las herramientas monitorización
+
+clusterManager // Administrar los cluster
+
+clusterAdmin // idem a manager + borrar bases de datos.
+
+Roles para backup y restore
+
+backup
+
+restore
+
+Roles para todas las bases de datos (también tienen que ser usuarios de admin)
+
+readAnyDatabase // Lectura  de todas las bases de datos.
+
+readWriteAnyDatabase // Lectura y escritura de todas las bases de datos.
+
+userAdminAnyDatabase // gestionar los usuarios de todas las bases de datos.
+
+dbAdminAnyDatabase // administración de todas las bases de datos.
+
+Roles para "super users" (también en admin)
+
+dbOwner sobre la base de datos admin
+userAdmin sobre la base de datos admin
+userAdminAnyDatabase
+
+root // readWriteAnyDatabase
+        dbAdminAnyDatabase
+        userAdminAnyDatabase
+        clusterAdmin
+        restore
+        backup
+
+
+
+
+
+
+
+
+
+
+
+
+Distinto usuario con el mismo nombre para varias bases de datos.
+
+// Para base de datos nuevayork
+
+db.createUser({
+    user: "luis",
+    pwd: "luis1234",
+    roles: ["read"]
+})
+
+// Para base de datos clinica
+
+db.createUser({
+    user: "luis",
+    pwd: "luis4321",
+    roles: ["readWrite"]
+})

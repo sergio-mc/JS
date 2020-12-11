@@ -1,0 +1,40 @@
+Herramientas de backup y restore
+
+mongodump // Herramienta de backup
+
+Nueva máquina a data/serverTestBackup
+
+Creamos 2 bases de datos con una colección cada una de 1000 docs
+
+use getafeTest1
+
+for (i=0; i < 1000; i++) {
+    db.foo1.insert({a: i})
+
+use getafeTest2
+
+for (i=0; i < 1000; i++) {
+    db.foo2.insert({a: i})
+}
+
+Desde cualquier ubicación (siempre que tengamos el comando mongodump disponible)
+
+mongodump --port 27017 --out=data/filesTestBackup/backup_10122020  --oplog (si fuera replica set)
+
+Tiene opciones para backup a nivel de base de datos
+
+--db=<basededatos>
+
+Y a nivel de colección
+
+--db=<basededatos> --collection=<colección>
+
+mongorestore // herramienta de recuperación
+
+borramos una colección
+
+db.foo2.drop()
+
+Y restauramos
+
+mongorestore --port 27017 data/filesTestBackup/backup_10122020

@@ -1,0 +1,92 @@
+Autenticación en MongoDB
+
+Mecanismos
+
+- SCRAM Por defecto
+
+- x.509 Certificate Authentication
+
+En la versión Enterprise
+
+- LDAP
+
+- Kerberos Authentication
+
+Por defecto tanto mongod como mongos levantan los servidores del SGBD sin autenticación.
+
+- Autenticación en cluster se lleva a cabo directamente sobre mongos. (Adicional a los shard).
+
+Usuarios.
+
+createUser() se ejecuta a nivel de base de datos.
+
+Sintaxis
+
+db.createUser({
+    user: <nombre>,
+    pwd: <contraseña>,
+    customData: <doc-info-adicional>,
+    roles: [
+        {documento de especificación del rol} | <rol>,
+        ...
+    ],
+    ...
+})
+
+Práctica
+
+Crear usuario en una base de datos
+use maraton
+db.createUser({
+    user: "juan",
+    pwd: "juan1234",
+    customData: {departamento: "IT", dni: "90807865P"},
+    roles: [
+        "readWrite"
+    ]
+})
+
+Aunque el usuario se establece a nivel de base de datos, los datos de este usuario se 
+gestionan de manera centralizada en la colecciín system.users de la base de datos admin.
+
+El anterior usuario, está a nivel de la base de datos maraton, ¿como creamos entonces un
+usuario que pueda acceder a todas las bases de datos?
+
+use admin
+
+db.createUser({
+    user: "superAdmin",
+    pwd: "1234",
+    roles: [
+        "userAdminAnyDatabase"
+    ]
+})
+
+Especificar cuando usamos mongod (o mongos) el uso de autenciación con la opción --auth
+
+iniciamos con mongod --auth ...resto de opciones
+
+Para conectar con la shell ahora tenemos que usar mongo con las siguientes opciones:
+
+mongo --authenticationDatabase "maraton" -u "juan" -p 
+
+Con la shell nos podemos autenticar después de iniciar sesión
+
+mongo --port ...
+
+use <base-de-datos-de-usuario>
+
+db.auth(<usuario>,<contraseña>)
+
+Cambio contraseña
+
+db.runCommand({
+    updateUser: "sara",
+    pwd: "hola"
+})
+
+Si necesitáramos que sea el propio usuario el que
+cambie su contraseña necesitará este rol:
+
+{ role:"changeOwnPasswordCustomDataRole", db:"admin" }
+

@@ -1,0 +1,17 @@
+Archivos de configuración.
+
+ruta-instalación/bin/mongod.cfg
+
+2 Opciones 
+ - Modificar el archivo por defecto de la instalación
+ - Tener otro archivo y referenciarlo en el comando mongod con la opción --config ruta/archivo
+
+Creamos archivos de configuración
+
+Ver server1|2|3
+
+Levantamos las máquinas con:
+
+mongod --config \Users\pedro\Documents\10_STORAGE\server1.cfg
+mongod --config \Users\pedro\Documents\10_STORAGE\server2.cfg
+mongod --config \Users\pedro\Documents\10_STORAGE\server3.cfg
