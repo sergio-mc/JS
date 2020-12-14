@@ -13,6 +13,9 @@
 6.- Install body-parser: npm i body-parser --save
 // What is body-parser? Extract the entire body portion of an incoming request stream and exposes it on req.body .
 
+7.- Install dotenv: npm i dotenv --save
+// What is dotenv? Dotenv is a zero-dependency module that loads environment variables from a .env file into process.env. Storing configuration in the environment separate from code is based on The Twelve-Factor App methodology.
+
 
 -- Start Project--
 
