@@ -1,5 +1,6 @@
 const { json } = require('body-parser');
 const express = require('express');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -25,13 +26,21 @@ app.get('/', (req, res) => {
 
 
 app.get('/:_id', (req, res) => {
+
+    let ObjectId = mongoose.Types.ObjectId;
+    if (!ObjectId.isValid(req.params._id)) {
+        return res.status(400).json({
+            errorMessage: '_id not valid'
+        })
+    }
+
     Product.findOne({ _id: req.params._id }, (err, product) => {
+        if (product === null) {
+            return res.status(400).json({
+                errorMessage: 'Not founded'
+            });
+        }
         if (err) {
-            if (product === null) {
-                return res.status(400).json({
-                    errorMessage: 'Not founded'
-                });
-            }
             return res.status(500).json({
                 errorMessage: 'Database error'
             });
@@ -39,8 +48,6 @@ app.get('/:_id', (req, res) => {
         res.status(200).json({
             product: product
         })
-
-
     })
 })
 
@@ -50,17 +57,17 @@ app.post('/', (req, res) => {
 
     const propsIn = Object.keys(req.body); // Key values from req = 'name','sku','description','price','stock'
 
-    const propsAllowed = ['name', 'sku', 'description', 'price', 'stock'];
+    const propsAllowed = ['name', 'sku', 'description', 'price', 'provider'];
 
     const validPost = propsIn.every(e => {  // This function compare both arrays by iterating each prop for both arrays and give a boolean depeding if all props macth or not.
         propsAllowed.includes(e);
     })
 
-    if (!validPost) {
-        return res.status(400).json({
-            errorMessage: 'Properties not allowed'
-        })
-    }
+    // if (!validPost) {
+    //     return res.status(400).json({
+    //         errorMessage: 'Properties not allowed'
+    //     })
+    // }
 
     let product = new Product({
         name: req.body.name,
@@ -99,25 +106,25 @@ app.post('/', (req, res) => {
 })
 
 
-app.put('/:_id', (req,res) => {
+app.put('/:_id', (req, res) => {
 
     let updatedProduct = {};
 
-    if(req.body.name) {
+    if (req.body.name) {
         updatedProduct.name = req.body.name
     }
-    if(req.body.description) {
+    if (req.body.description) {
         updatedProduct.description = req.body.description
     }
-    if(req.body.price) {
+    if (req.body.price) {
         updatedProduct.price = req.body.price
     }
-    if(req.body.provider) {
+    if (req.body.provider) {
         updatedProduct.provider = req.body.provider
     }
 
-    Product.findOneAndUpdate({_id: req.params._id},{$set: updatedProduct}, {new: true} ,(err, product) => {
-        if(err){
+    Product.findOneAndUpdate({ _id: req.params._id }, { $set: updatedProduct }, { new: true }, (err, product) => {
+        if (err) {
             return res.status(400).json({
                 errorMessage: 'Database error'
             })
@@ -129,16 +136,16 @@ app.put('/:_id', (req,res) => {
 
 })
 
-app.delete('/:_id', (req,res) => {
+app.delete('/:_id', (req, res) => {
 
-    if(product === null) {
+    if (product === null) {
         return res.status(400).json({
             errorMessage: 'El registro no existe'
         })
     }
 
-    Product.findByIdAndDelete(req.params._id, (err,product) => {
-        if(err){
+    Product.findByIdAndDelete(req.params._id, (err, product) => {
+        if (err) {
             return res.status(400).json({
                 errorMessage: 'Database error'
             })

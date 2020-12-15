@@ -9,7 +9,8 @@ const app = express();
 
 const product = require('./routes/product');
 
-const port = process.env.PORT; // Declaramos las variables en Node es VARIABLE_ENTORNO=valor
+const port = process.env.PORT;
+const mongoURI = process.env.MONGOURI; // Declaramos las variables en Node es VARIABLE_ENTORNO=valor
 
 
 // Mongoose options
@@ -20,7 +21,7 @@ const options = {
 }
 
 // Mongoose connection
-mongoose.connect('mongodb://localhost:27017/erp', options)
+mongoose.connect(mongoURI, options)
     .then(() => {
         console.log('Connection with database successful')
     })

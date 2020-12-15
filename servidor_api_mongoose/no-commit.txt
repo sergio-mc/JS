@@ -1,0 +1,26 @@
+Variables de entorno Node
+
+1.- Como variables las declaramos en:
+
+En Distribuciones Linux o MacOS
+
+VARIABLE=valor
+
+En Windows
+
+$env:VARIABLE=valor  (para consola powershell)
+
+
+2.- Mediante archivo.
+
+Paquete dotenv de npm (ver en app.js)
+
+las llamadas desde codigo
+
+proccess.env.VARIABLE
+
+
+
+MongoURI para replica set sin dominio:
+
+mongodb://localhost:27101,localhost:27102,localhost:27103/erp?replicaSet=<nombreCluster>
