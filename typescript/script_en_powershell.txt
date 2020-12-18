@@ -1,0 +1,9 @@
+Para Windows
+
+Abrir PowerShell como administrador
+
+Get-ExecutionPolicy -> Esto tiene que tener valor = Unrestricted
+
+Cambiamos con 
+
+Set-ExecutionPolicy Unrestricted

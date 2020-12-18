@@ -2,9 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cors = require('cors');
+
 dotenv.config();
 
 const app = express();
+app.use(cors());
 
 
 const product = require('./routes/product');
@@ -42,3 +45,6 @@ app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`)
 })
 
+// app.listen(8080, '0.0.0.0', () => {
+//     console.log('Listening to port:  ' + 8080);
+// });

@@ -10,7 +10,8 @@ const Product = require('../models/product');
 
 // This get method find in the database all products and projects only the name and the sku without _id for each product.
 app.get('/', (req, res) => {
-    Product.find({}).select({ name: 1, sku: 1, _id: 0 }).exec((err, products) => {
+    //Product.find({}).select({ name: 1, sku: 1, _id: 0 }).exec((err, products) => {   // Con proyeccion
+    Product.find({}).select().exec((err, products) => {
         if (err) {
             return res.status(500).json({
                 errorMessage: 'Database error'
@@ -51,6 +52,20 @@ app.get('/:_id', (req, res) => {
     })
 })
 
+app.get('/search/:termino', (req,res) => {
+    Product.find({name: {$regex: req.params.termino, $options: 'i'}})
+            .exec((err, products) => {
+                if(err){
+                    return res.status(400).json({
+                        errorMessage: err
+                    })
+                }
+
+                res.status(200).json({
+                    products: products
+                })
+            })
+})
 
 
 app.post('/', (req, res) => {
@@ -95,7 +110,7 @@ app.post('/', (req, res) => {
             })
         }
         res.status(200).json({
-            message: 'ok'
+            message: 'Product successfully created'
         });
     });
 
@@ -138,11 +153,11 @@ app.put('/:_id', (req, res) => {
 
 app.delete('/:_id', (req, res) => {
 
-    if (product === null) {
-        return res.status(400).json({
-            errorMessage: 'El registro no existe'
-        })
-    }
+    // if (product === null) {
+    //     return res.status(400).json({
+    //         errorMessage: 'El registro no existe'
+    //     })
+    // }
 
     Product.findByIdAndDelete(req.params._id, (err, product) => {
         if (err) {
